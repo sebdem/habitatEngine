@@ -150,7 +150,6 @@
     </JAVADOC>
     <SOURCES>
       <root url="jar://$PROJECT_DIR$/lib/LWJGL_3.1.6/joml-1.9.8-sources.jar!/" />
-      <root url="jar://$PROJECT_DIR$/lib/LWJGL_3.1.6/joml-1.9.8-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/LWJGL_3.1.6/lwjgl-assimp-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/LWJGL_3.1.6/lwjgl-bgfx-sources.jar!/" />
       <root url="jar://$PROJECT_DIR$/lib/LWJGL_3.1.6/lwjgl-egl-sources.jar!/" />

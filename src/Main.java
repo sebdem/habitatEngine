@@ -1,3 +1,6 @@
+import habitat.ExampleGame;
+import habitat.IHabitatGameLogic;
+import habitat.IHabitatWindow;
 import habitat.data.HColor;
 import habitat.util.Colors;
 import org.lwjgl.*;
@@ -17,18 +20,20 @@ import static org.lwjgl.system.MemoryUtil.*;
 
 public class Main {
 
-    // The window handle
-    private long window;
+    // The windowHandle handle
+    private long windowHandle;
+    IHabitatWindow window;
 
+    IHabitatGameLogic game = new ExampleGame();
     public void run() {
         System.out.println("Hello LWJGL " + Version.getVersion() + "!");
 
         init();
         loop();
 
-        // Free the window callbacks and destroy the window
-        glfwFreeCallbacks(window);
-        glfwDestroyWindow(window);
+        // Free the windowHandle callbacks and destroy the windowHandle
+        glfwFreeCallbacks(windowHandle);
+        glfwDestroyWindow(windowHandle);
 
         // Terminate GLFW and free the error callback
         glfwTerminate();
@@ -45,17 +50,17 @@ public class Main {
             throw new IllegalStateException("Unable to initialize GLFW");
 
         // Configure GLFW
-        glfwDefaultWindowHints(); // optional, the current window hints are already the default
-        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the window will stay hidden after creation
-        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the window will be resizable
+        glfwDefaultWindowHints(); // optional, the current windowHandle hints are already the default
+        glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE); // the windowHandle will stay hidden after creation
+        glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the windowHandle will be resizable
 
-        // Create the window
-        window = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
-        if ( window == NULL )
-            throw new RuntimeException("Failed to create the GLFW window");
+        // Create the windowHandle
+        windowHandle = glfwCreateWindow(300, 300, "Hello World!", NULL, NULL);
+        if ( windowHandle == NULL )
+            throw new RuntimeException("Failed to create the GLFW windowHandle");
 
         // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        glfwSetKeyCallback(window, (window, key, scancode, action, mods) -> {
+        glfwSetKeyCallback(windowHandle, (window, key, scancode, action, mods) -> {
             if ( key == GLFW_KEY_ESCAPE && action == GLFW_RELEASE )
                 glfwSetWindowShouldClose(window, true); // We will detect this in the rendering loop
         });
@@ -65,27 +70,27 @@ public class Main {
             IntBuffer pWidth = stack.mallocInt(1); // int*
             IntBuffer pHeight = stack.mallocInt(1); // int*
 
-            // Get the window size passed to glfwCreateWindow
-            glfwGetWindowSize(window, pWidth, pHeight);
+            // Get the windowHandle size passed to glfwCreateWindow
+            glfwGetWindowSize(windowHandle, pWidth, pHeight);
 
             // Get the resolution of the primary monitor
             GLFWVidMode vidmode = glfwGetVideoMode(glfwGetPrimaryMonitor());
 
-            // Center the window
+            // Center the windowHandle
             glfwSetWindowPos(
-                    window,
+                    windowHandle,
                     (vidmode.width() - pWidth.get(0)) / 2,
                     (vidmode.height() - pHeight.get(0)) / 2
             );
         } // the stack frame is popped automatically
 
         // Make the OpenGL context current
-        glfwMakeContextCurrent(window);
+        glfwMakeContextCurrent(windowHandle);
         // Enable v-sync
         glfwSwapInterval(1);
 
-        // Make the window visible
-        glfwShowWindow(window);
+        // Make the windowHandle visible
+        glfwShowWindow(windowHandle);
     }
 
     private void loop() {
@@ -96,39 +101,43 @@ public class Main {
         // bindings available for use.
         GL.createCapabilities();
 
-
         // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-        while ( !glfwWindowShouldClose(window) ) {
-            // Set the clear color
-            HColor bgcolor = Colors.BACKGROUND_COLOR();
-            glClearColor(bgcolor.getV1(), bgcolor.getV2(), bgcolor.getV3(), 0.0f);
+        // the windowHandle or has pressed the ESCAPE key.
+        while ( !glfwWindowShouldClose(windowHandle) ) {
+            render();
 
-            float[] verts = {
-                -0.5f,  0.5f,
-                        -0.5f, -0.5f,
-                        0.5f, -0.5f
-            };
-
-            int vao = glGenVertexArrays();
-            glBindVertexArray(vao);
-
-            int vbo = glGenBuffers();
-            glBindBuffer(GL_ARRAY_BUFFER, vbo);
-            glBufferData(GL_ARRAY_BUFFER, verts, GL_STATIC_DRAW);
-            GL20.glVertexAttribPointer(0, 2, GL_FLOAT, (GL_FALSE != 0), 0, 0);
-            GL20.glEnableVertexAttribArray(0);
-
-            glDrawArrays(GL_TRIANGLES, 0, 3);
-
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
-
-            glfwSwapBuffers(window); // swap the color buffers
-
-            // Poll for window events. The key callback above will only be
+            // Poll for windowHandle events. The key callback above will only be
             // invoked during this call.
             glfwPollEvents();
         }
+    }
+
+    private void render() {
+
+        // Set the clear color
+        HColor bgcolor = Colors.BACKGROUND_COLOR();
+        glClearColor(bgcolor.getV1(), bgcolor.getV2(), bgcolor.getV3(), 0.0f);
+
+        float[] verts = {
+                -0.5f,  0.5f,
+                -0.5f, -0.5f,
+                0.5f, -0.5f
+        };
+
+        int vao = glGenVertexArrays();
+        glBindVertexArray(vao);
+
+        int vbo = glGenBuffers();
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, verts, GL_STATIC_DRAW);
+        GL20.glVertexAttribPointer(0, 2, GL_FLOAT, (GL_FALSE != 0), 0, 0);
+        GL20.glEnableVertexAttribArray(0);
+
+        glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
+
+        glfwSwapBuffers(windowHandle); // swap the color buffers
     }
 
     public static void main(String[] args) {
