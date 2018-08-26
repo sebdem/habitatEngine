@@ -11,8 +11,12 @@ public class FTriplet {
         this.v3 = v3;
     }
 
+    // i get the feeling those two methods will help a lot, especially when rendering
     public static FTriplet zero(){
         return new FTriplet(0,0,0);
+    }
+    public static FTriplet one(){
+        return new FTriplet(1,1,1);
     }
 
     public float getV1() {
@@ -42,8 +46,25 @@ public class FTriplet {
         return this;
     }
 
-
     public float[] toArray(){
         return new float[]{v1,v2,v3};
+    }
+
+    // all calculation methods return a NEW instance of FTriplets
+    public <E extends FTriplet> FTriplet add(E other) {
+        return new FTriplet( getV1()+other.getV1(),getV2()+other.getV2(),getV3()+other.getV3());
+    }
+    public <E extends FTriplet> FTriplet substract(E other) {
+        return new FTriplet( getV1()-other.getV1(),getV2()-other.getV2(),getV3()-other.getV3());
+    }
+
+    public <E extends FTriplet> FTriplet multiply(E other) {
+        return new FTriplet( getV1()*other.getV1(),getV2()*other.getV2(),getV3()*other.getV3());
+    }
+    public <E extends FTriplet> FTriplet multiply(float factor) {
+        return new FTriplet( getV1()*factor,getV2()*factor,getV3()*factor);
+    }
+    public <E extends FTriplet> FTriplet divide(float factor) {
+        return new FTriplet( getV1()/factor,getV2()/factor,getV3()/factor);
     }
 }
