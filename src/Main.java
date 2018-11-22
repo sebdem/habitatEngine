@@ -22,11 +22,12 @@ public class Main {
 
     // The windowHandle handle
     private long windowHandle;
-    IHabitatWindow window;
+    public IHabitatWindow window;
 
-    IHabitatGameLogic game = new ExampleGame();
+    public IHabitatGameLogic game = new ExampleGame();
+
     public void run() {
-        System.out.println("Hello LWJGL " + Version.getVersion() + "!");
+        // TODO startup logging (also, print out lwjgl Version.getVersion() )
 
         init();
         loop();
@@ -55,7 +56,7 @@ public class Main {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the windowHandle will be resizable
 
         // Create the windowHandle
-        windowHandle = glfwCreateWindow(1280, 720, "Hello World!", NULL, NULL);
+        windowHandle = glfwCreateWindow(816, 624, "Hello World!", NULL, NULL);
         if ( windowHandle == NULL )
             throw new RuntimeException("Failed to create the GLFW windowHandle");
 
@@ -91,6 +92,12 @@ public class Main {
 
         // Make the windowHandle visible
         glfwShowWindow(windowHandle);
+        try {
+            this.game.init();
+        } catch (Exception e) {
+            // TODO log initialization error
+            e.printStackTrace();
+        }
     }
 
     private void loop() {
@@ -105,7 +112,6 @@ public class Main {
         // the windowHandle or has pressed the ESCAPE key.
         while ( !glfwWindowShouldClose(windowHandle) ) {
             render();
-
             // Poll for windowHandle events. The key callback above will only be
             // invoked during this call.
             glfwPollEvents();
@@ -134,6 +140,8 @@ public class Main {
         GL20.glEnableVertexAttribArray(0);
 
         glDrawArrays(GL_TRIANGLES, 0, 3);
+
+        this.game.render(windowHandle);
 
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 

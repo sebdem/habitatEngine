@@ -7,7 +7,7 @@ public class ExampleGame implements IHabitatGameLogic {
     }
 
     @Override
-    public void input(int windowHandle) {
+    public void input(long windowHandle) {
 
     }
 
@@ -17,7 +17,6 @@ public class ExampleGame implements IHabitatGameLogic {
     }
 
     @Override
-    public void render(int windowHandle) {
-
+    public void render(long windowHandle) {
     }
 }
