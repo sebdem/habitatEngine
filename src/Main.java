@@ -3,20 +3,18 @@ import habitat.IHabitatGameLogic;
 import habitat.IHabitatWindow;
 import habitat.data.HColor;
 import habitat.util.Colors;
-import org.lwjgl.*;
-import org.lwjgl.glfw.*;
-import org.lwjgl.opengl.*;
-import org.lwjgl.system.*;
+import org.lwjgl.glfw.GLFWErrorCallback;
+import org.lwjgl.glfw.GLFWVidMode;
+import org.lwjgl.opengl.GL;
+import org.lwjgl.system.MemoryStack;
 
-import java.nio.*;
+import java.nio.IntBuffer;
 
-import static org.lwjgl.glfw.Callbacks.*;
+import static org.lwjgl.glfw.Callbacks.glfwFreeCallbacks;
 import static org.lwjgl.glfw.GLFW.*;
 import static org.lwjgl.opengl.GL11.*;
-import static org.lwjgl.opengl.GL15.*;
-import static org.lwjgl.opengl.GL30.*;
-import static org.lwjgl.system.MemoryStack.*;
-import static org.lwjgl.system.MemoryUtil.*;
+import static org.lwjgl.system.MemoryStack.stackPush;
+import static org.lwjgl.system.MemoryUtil.NULL;
 
 public class Main {
 
@@ -25,6 +23,10 @@ public class Main {
     public IHabitatWindow window;
 
     public IHabitatGameLogic game = new ExampleGame();
+
+    private final int INIT_WIDTH = 816;
+    private final int INIT_HEIGHT = 624;
+
 
     public void run() {
         // TODO startup logging (also, print out lwjgl Version.getVersion() )
@@ -56,7 +58,7 @@ public class Main {
         glfwWindowHint(GLFW_RESIZABLE, GLFW_TRUE); // the windowHandle will be resizable
 
         // Create the windowHandle
-        windowHandle = glfwCreateWindow(816, 624, "Hello World!", NULL, NULL);
+        windowHandle = glfwCreateWindow(INIT_WIDTH, INIT_HEIGHT, "Hello World!", NULL, NULL);
         if ( windowHandle == NULL )
             throw new RuntimeException("Failed to create the GLFW windowHandle");
 
@@ -124,26 +126,9 @@ public class Main {
         HColor bgcolor = Colors.BACKGROUND_COLOR();
         glClearColor(bgcolor.getV1(), bgcolor.getV2(), bgcolor.getV3(), 0.0f);
 
-        float[] verts = {
-                -0.5f,  0.5f,
-                -0.5f, -0.5f,
-                0.5f, -0.5f
-        };
-
-        int vao = glGenVertexArrays();
-        glBindVertexArray(vao);
-
-        int vbo = glGenBuffers();
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, verts, GL_STATIC_DRAW);
-        GL20.glVertexAttribPointer(0, 2, GL_FLOAT, (GL_FALSE != 0), 0, 0);
-        GL20.glEnableVertexAttribArray(0);
-
-        glDrawArrays(GL_TRIANGLES, 0, 3);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
         this.game.render(windowHandle);
-
-        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // clear the framebuffer
 
         glfwSwapBuffers(windowHandle); // swap the color buffers
     }
